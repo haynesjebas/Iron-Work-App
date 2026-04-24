@@ -4,747 +4,911 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#667eea">
-  <title>IronWork - Secure Work Tracking</title>
+  <title>IronWork - Work Tracking App</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
       background: #f8f9fa;
       color: #333;
+      line-height: 1.6;
     }
-    button { font-family: inherit; }
-    input, select, textarea { font-family: inherit; }
+
+    button {
+      font-family: inherit;
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+    }
+
+    .container {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* Setup Screen */
+    .setup-screen {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .setup-box {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .setup-box h1 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .setup-box p {
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .setup-box input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+
+    .setup-box button {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .setup-box button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .help-btn {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      color: #667eea;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .help-text {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .help-text.show {
+      display: block;
+    }
+
+    .help-text p {
+      font-size: 12px;
+      color: #666;
+      margin: 0 0 10px 0;
+      text-align: left;
+    }
+
+    .help-text ol {
+      font-size: 12px;
+      color: #666;
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    /* Dashboard */
+    .dashboard {
+      min-height: 100vh;
+      background: #f8f9fa;
+      padding-bottom: 80px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 20px;
+      border-radius: 0 0 20px 20px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0 0 20px 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-card .label {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 5px;
+    }
+
+    .stat-card .value {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      margin-top: 20px;
+    }
+
+    .project-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .project-card {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+
+    .project-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .project-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .project-rate {
+      font-size: 12px;
+      color: #666;
+      margin: 0;
+    }
+
+    .project-earnings {
+      font-size: 18px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .project-info {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .progress-bar {
+      background: #f0f0f0;
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress-fill {
+      background: #667eea;
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .entries-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .entry-card {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .entry-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .entry-left {
+      flex: 1;
+    }
+
+    .entry-project {
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .entry-time {
+      color: #999;
+      font-size: 12px;
+    }
+
+    .entry-right {
+      text-align: right;
+    }
+
+    .entry-earnings {
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .entry-hours {
+      color: #999;
+      font-size: 12px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e0e0e0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 10px 0;
+    }
+
+    .nav-btn {
+      padding: 15px;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .nav-btn.primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .nav-btn.secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    /* Form Screens */
+    .screen {
+      min-height: 100vh;
+      background: #f8f9fa;
+      padding-bottom: 20px;
+    }
+
+    .screen-header {
+      background: #667eea;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .screen-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .payment-type-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .payment-btn {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .payment-btn.active {
+      border-color: #667eea;
+      background: #f0f0ff;
+      color: #667eea;
+    }
+
+    .checkbox-wrapper {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .checkbox-wrapper label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .checkbox-wrapper input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .empty-state {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .empty-state p {
+      color: #999;
+      margin-bottom: 15px;
+    }
+
+    .create-btn {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div id="root"></div>
-
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/recharts@2.10.3/dist/Recharts.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/appwrite@16.0.2"></script>
+  <div id="app"></div>
 
   <script>
-    const { useState, useEffect } = React;
-    const { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
-
-    // YOUR APPWRITE CONFIGURATION - EXACT IDs
-    const APPWRITE_ENDPOINT = 'https://cloud.appwrite.io/v1';
-    const APPWRITE_PROJECT_ID = localStorage.getItem('appwrite_project_id') || '';
-    const DATABASE_ID = '69e95a44001bdc4c7e8e';  // YOUR DATABASE ID
-    const PROJECTS_COLLECTION_ID = 'projects';
-    const ENTRIES_COLLECTION_ID = 'entries';
-
-    let client, account, databases;
-
-    const initAppwrite = (projectId) => {
-      client = new Appwrite.Client()
-        .setEndpoint(APPWRITE_ENDPOINT)
-        .setProject(projectId);
-      
-      account = new Appwrite.Account(client);
-      databases = new Appwrite.Databases(client);
+    // Simple state management
+    let state = {
+      screen: 'dashboard',
+      apiUrl: localStorage.getItem('apiUrl') || '',
+      projects: [],
+      entries: [],
+      loading: false,
+      showHelp: false,
+      formData: {
+        project: '',
+        date: new Date().toISOString().split('T')[0],
+        startTime: '17:00',
+        endTime: '20:00',
+        isHoliday: false,
+        name: '',
+        paymentType: 'Per Day',
+        salary: '',
+        workingDays: '30',
+        targetHours: ''
+      }
     };
 
-    const IronworkApp = () => {
-      const [user, setUser] = useState(null);
-      const [screen, setScreen] = useState('setup');
-      const [projects, setProjects] = useState([]);
-      const [entries, setEntries] = useState([]);
-      const [loading, setLoading] = useState(false);
-      const [error, setError] = useState('');
-      const [projectId, setProjectId] = useState(APPWRITE_PROJECT_ID);
+    const app = document.getElementById('app');
 
-      useEffect(() => {
-        if (APPWRITE_PROJECT_ID) {
-          initAppwrite(APPWRITE_PROJECT_ID);
-          checkSession();
-        }
-      }, []);
-
-      const checkSession = async () => {
-        try {
-          const session = await account.get();
-          setUser(session);
-          setScreen('dashboard');
-        } catch (e) {
-          setScreen('login');
-        }
-      };
-
-      const handleSetup = () => {
-        if (projectId) {
-          localStorage.setItem('appwrite_project_id', projectId);
-          initAppwrite(projectId);
-          setScreen('login');
-        }
-      };
-
-      const auth = {
-        signup: async (email, password, name) => {
-          try {
-            await account.create('unique()', email, password, name);
-            return await auth.login(email, password);
-          } catch (e) {
-            throw new Error(e.message || 'Signup failed');
-          }
-        },
-        login: async (email, password) => {
-          try {
-            await account.createEmailPasswordSession(email, password);
-            const user = await account.get();
-            return user;
-          } catch (e) {
-            throw new Error(e.message || 'Login failed');
-          }
-        },
-        logout: async () => {
-          try {
-            await account.deleteSession('current');
-            setUser(null);
-            setScreen('login');
-          } catch (e) {
-            console.error(e);
-          }
-        }
-      };
-
-      const api = {
-        getProjects: async () => {
-          try {
-            const response = await databases.listDocuments(
-              DATABASE_ID,
-              PROJECTS_COLLECTION_ID,
-              [
-                Appwrite.Query.equal('user_id', user.$id)
-              ]
-            );
-            setProjects(response.documents);
-          } catch (e) {
-            console.error('Get projects error:', e);
-          }
-        },
-        getEntries: async () => {
-          try {
-            const response = await databases.listDocuments(
-              DATABASE_ID,
-              ENTRIES_COLLECTION_ID,
-              [
-                Appwrite.Query.equal('user_id', user.$id),
-                Appwrite.Query.orderDesc('date'),
-                Appwrite.Query.limit(100)
-              ]
-            );
-            setEntries(response.documents);
-          } catch (e) {
-            console.error('Get entries error:', e);
-          }
-        },
-        addProject: async (project) => {
-          try {
-            const rate = project.paymentType === 'Per Day'
-              ? (parseFloat(project.salary) / parseFloat(project.workingDays || 30))
-              : parseFloat(project.salary);
-
-            await databases.createDocument(
-              DATABASE_ID,
-              PROJECTS_COLLECTION_ID,
-              'unique()',
-              {
-                user_id: user.$id,
-                name: project.name,
-                paymentType: project.paymentType,
-                salary: parseFloat(project.salary),
-                workingDays: parseFloat(project.workingDays || 30),
-                targetHours: parseFloat(project.targetHours || 0),
-                rate: rate,
-                active: true,
-              }
-            );
-            await api.getProjects();
-          } catch (e) {
-            console.error('Add project error:', e);
-            alert('Failed to add project: ' + e.message);
-          }
-        },
-        updateProject: async (projectId, project) => {
-          try {
-            const rate = project.paymentType === 'Per Day'
-              ? (parseFloat(project.salary) / parseFloat(project.workingDays || 30))
-              : parseFloat(project.salary);
-
-            await databases.updateDocument(
-              DATABASE_ID,
-              PROJECTS_COLLECTION_ID,
-              projectId,
-              {
-                name: project.name,
-                paymentType: project.paymentType,
-                salary: parseFloat(project.salary),
-                workingDays: parseFloat(project.workingDays || 30),
-                targetHours: parseFloat(project.targetHours || 0),
-                rate: rate,
-              }
-            );
-            await api.getProjects();
-          } catch (e) {
-            console.error('Update project error:', e);
-            alert('Failed to update project: ' + e.message);
-          }
-        },
-        deleteProject: async (projectId) => {
-          try {
-            await databases.deleteDocument(DATABASE_ID, PROJECTS_COLLECTION_ID, projectId);
-            await api.getProjects();
-          } catch (e) {
-            console.error('Delete project error:', e);
-          }
-        },
-        addEntry: async (entry) => {
-          try {
-            let hours = 0;
-            if (!entry.isHoliday && entry.startTime && entry.endTime) {
-              const [sh, sm] = entry.startTime.split(':').map(Number);
-              const [eh, em] = entry.endTime.split(':').map(Number);
-              hours = (eh + em/60) - (sh + sm/60);
-              if (hours < 0) hours += 24;
-            }
-
-            const project = projects.find(p => p.$id === entry.project_id);
-            let earnings = 0;
-            if (project) {
-              if (entry.isHoliday) {
-                earnings = project.rate;
-              } else if (project.paymentType === 'Per Day') {
-                earnings = project.rate;
-              } else {
-                earnings = hours * project.rate;
-              }
-            }
-
-            await databases.createDocument(
-              DATABASE_ID,
-              ENTRIES_COLLECTION_ID,
-              'unique()',
-              {
-                user_id: user.$id,
-                project_id: entry.project_id,
-                date: entry.date,
-                startTime: entry.startTime || '',
-                endTime: entry.endTime || '',
-                isHoliday: entry.isHoliday,
-                hours: hours,
-                earnings: earnings,
-                notes: entry.notes || '',
-              }
-            );
-            await api.getEntries();
-          } catch (e) {
-            console.error('Add entry error:', e);
-            alert('Failed to add entry: ' + e.message);
-          }
-        },
-        deleteEntry: async (entryId) => {
-          try {
-            await databases.deleteDocument(DATABASE_ID, ENTRIES_COLLECTION_ID, entryId);
-            await api.getEntries();
-          } catch (e) {
-            console.error('Delete entry error:', e);
-          }
-        },
-      };
-
-      useEffect(() => {
-        if (user && screen === 'dashboard') {
-          api.getProjects();
-          api.getEntries();
-        }
-      }, [screen, user]);
-
-      const handleLogin = async (email, password) => {
-        setLoading(true);
-        setError('');
-        try {
-          const userData = await auth.login(email, password);
-          setUser(userData);
-          setScreen('dashboard');
-        } catch (e) {
-          setError(e.message);
-        }
-        setLoading(false);
-      };
-
-      const handleSignup = async (email, password, name) => {
-        setLoading(true);
-        setError('');
-        try {
-          const userData = await auth.signup(email, password, name);
-          setUser(userData);
-          setScreen('dashboard');
-        } catch (e) {
-          setError(e.message);
-        }
-        setLoading(false);
-      };
-
-      const calculateStats = () => {
-        let totalEarnings = 0;
-        let totalHours = 0;
-        const projectStats = {};
-        const monthlyData = {};
-
-        entries.forEach(entry => {
-          const date = new Date(entry.date);
-          const monthKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
-
-          totalEarnings += entry.earnings || 0;
-          totalHours += entry.hours || 0;
-
-          const project = projects.find(p => p.$id === entry.project_id);
-          const projectName = project?.name || 'Unknown';
-
-          if (!projectStats[projectName]) {
-            projectStats[projectName] = { earnings: 0, hours: 0, days: 0, project };
-          }
-          projectStats[projectName].earnings += entry.earnings || 0;
-          projectStats[projectName].hours += entry.hours || 0;
-          if (entry.earnings > 0) projectStats[projectName].days += 1;
-
-          if (!monthlyData[monthKey]) {
-            monthlyData[monthKey] = { earnings: 0, hours: 0, days: 0 };
-          }
-          monthlyData[monthKey].earnings += entry.earnings || 0;
-          monthlyData[monthKey].hours += entry.hours || 0;
-          if (entry.earnings > 0) monthlyData[monthKey].days += 1;
-        });
-
-        return { totalEarnings, totalHours, projectStats, monthlyData };
-      };
-
-      if (!APPWRITE_PROJECT_ID || screen === 'setup') {
-        return React.createElement(SetupScreen, { 
-          projectId, setProjectId, 
-          onSetup: handleSetup, 
-          error 
-        });
+    // API Functions
+    async function fetchProjects() {
+      if (!state.apiUrl) return;
+      try {
+        const response = await fetch(`${state.apiUrl}?action=getProjects`);
+        const data = await response.json();
+        state.projects = data.projects || [];
+        render();
+      } catch (error) {
+        console.error('Error loading projects:', error);
       }
+    }
 
-      if (!user || screen === 'login') {
-        return React.createElement(LoginScreen, { 
-          onLogin: handleLogin, 
-          onSignup: handleSignup, 
-          loading, 
-          error, 
-          setError 
-        });
+    async function fetchEntries() {
+      if (!state.apiUrl) return;
+      try {
+        const response = await fetch(`${state.apiUrl}?action=getEntries`);
+        const data = await response.json();
+        state.entries = data.entries || [];
+        render();
+      } catch (error) {
+        console.error('Error loading entries:', error);
       }
+    }
 
+    async function addProject(formData) {
+      state.loading = true;
+      render();
+      try {
+        await fetch(state.apiUrl, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'addProject',
+            ...formData
+          })
+        });
+        await fetchProjects();
+        state.screen = 'dashboard';
+        state.formData = { name: '', paymentType: 'Per Day', salary: '', workingDays: '30', targetHours: '' };
+      } catch (error) {
+        console.error('Error adding project:', error);
+        alert('Error adding project');
+      }
+      state.loading = false;
+      render();
+    }
+
+    async function addEntry(formData) {
+      state.loading = true;
+      render();
+      try {
+        await fetch(state.apiUrl, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'addEntry',
+            ...formData
+          })
+        });
+        await fetchEntries();
+        state.screen = 'dashboard';
+        state.formData = { project: state.projects[0]?.name || '', date: new Date().toISOString().split('T')[0], startTime: '17:00', endTime: '20:00', isHoliday: false };
+      } catch (error) {
+        console.error('Error adding entry:', error);
+        alert('Error adding entry');
+      }
+      state.loading = false;
+      render();
+    }
+
+    function setupApi(url) {
+      localStorage.setItem('apiUrl', url);
+      state.apiUrl = url;
+      state.screen = 'dashboard';
+      fetchProjects();
+      fetchEntries();
+      render();
+    }
+
+    function calculateStats() {
+      let totalEarnings = 0;
+      let totalHours = 0;
+      const projectStats = {};
+
+      state.entries.forEach(entry => {
+        totalEarnings += entry.earnings || 0;
+        totalHours += entry.hours || 0;
+
+        if (!projectStats[entry.project]) {
+          projectStats[entry.project] = { earnings: 0, hours: 0, days: 0 };
+        }
+        projectStats[entry.project].earnings += entry.earnings || 0;
+        projectStats[entry.project].hours += entry.hours || 0;
+        if (entry.earnings > 0) projectStats[entry.project].days += 1;
+      });
+
+      return { totalEarnings, totalHours, projectStats };
+    }
+
+    // Render functions
+    function renderSetupScreen() {
+      const urlInput = document.createElement('input');
+      urlInput.type = 'text';
+      urlInput.placeholder = 'https://script.google.com/macros/d/...';
+      urlInput.id = 'api-url-input';
+
+      const connectBtn = document.createElement('button');
+      connectBtn.textContent = 'Connect';
+      connectBtn.onclick = () => {
+        const url = document.getElementById('api-url-input').value;
+        if (url) setupApi(url);
+      };
+
+      const helpBtn = document.createElement('button');
+      helpBtn.className = 'help-btn';
+      helpBtn.textContent = state.showHelp ? '✕ Hide Help' : 'ℹ️ How to Setup';
+      helpBtn.onclick = () => {
+        state.showHelp = !state.showHelp;
+        render();
+      };
+
+      const helpText = document.createElement('div');
+      helpText.className = `help-text ${state.showHelp ? 'show' : ''}`;
+      helpText.innerHTML = `
+        <p><strong>Step 1:</strong> Create Google Sheet with "Projects" and "Entries" sheets</p>
+        <p><strong>Step 2:</strong> Add Google Apps Script code (from setup guide)</p>
+        <p><strong>Step 3:</strong> Deploy as Web App → copy URL</p>
+        <p><strong>Step 4:</strong> Paste URL here → Connect</p>
+        <p style="margin-top: 15px; font-size: 11px; color: #999;">Full guide: See SETUP_GUIDE.md</p>
+      `;
+
+      app.innerHTML = `
+        <div class="setup-screen">
+          <div class="setup-box">
+            <h1>⚙️ Setup</h1>
+            <p>Connect your Google Sheet</p>
+          </div>
+        </div>
+      `;
+
+      const box = app.querySelector('.setup-box');
+      box.appendChild(urlInput);
+      box.appendChild(connectBtn);
+      box.appendChild(helpText);
+      box.appendChild(helpBtn);
+    }
+
+    function renderDashboard() {
       const stats = calculateStats();
+      const activeProjects = state.projects.filter(p => p.active);
 
-      if (screen === 'dashboard') {
-        return React.createElement(DashboardScreen, {
-          stats, projects, entries, user,
-          onLogout: () => auth.logout(),
-          onAddEntry: () => setScreen('addEntry'),
-          onAddProject: () => setScreen('addProject'),
-          onEditProject: (p) => { setScreen('editProject'); window.editingProject = p; },
-          onDeleteProject: (id) => api.deleteProject(id),
-          onDeleteEntry: (id) => api.deleteEntry(id),
-          onExport: () => setScreen('export')
-        });
+      let projectsHtml = '';
+      if (activeProjects.length === 0) {
+        projectsHtml = `
+          <div class="empty-state">
+            <p>No projects yet</p>
+            <button class="create-btn" onclick="state.screen='addProject';render()">Create Project</button>
+          </div>
+        `;
+      } else {
+        projectsHtml = activeProjects.map(project => {
+          const projectData = stats.projectStats[project.name] || { earnings: 0, hours: 0, days: 0 };
+          const progressPercent = project.targetHours ? Math.min((projectData.hours / project.targetHours) * 100, 100) : 0;
+          
+          return `
+            <div class="project-card">
+              <div class="project-header">
+                <div>
+                  <h3 class="project-name">${project.name}</h3>
+                  <p class="project-rate">${project.paymentType === 'Per Day' ? `₹${project.salary}/month` : `₹${project.rate || Math.round(project.salary / (project.targetHours || 1))}/hr`}</p>
+                </div>
+                <div>
+                  <div class="project-earnings">₹${Math.round(projectData.earnings).toLocaleString()}</div>
+                  <div class="project-info">${project.paymentType === 'Per Day' ? projectData.days + ' days' : Math.round(projectData.hours) + 'h'}</div>
+                </div>
+              </div>
+              ${project.paymentType === 'Hourly' && project.targetHours > 0 ? `
+                <div style="margin-top: 12px;">
+                  <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Target: ${project.targetHours}h</div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                  </div>
+                  <div style="font-size: 11px; color: #999; margin-top: 3px;">${Math.round(projectData.hours * 10) / 10} / ${project.targetHours}h</div>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('');
       }
 
-      if (screen === 'addEntry') {
-        return React.createElement(AddEntryScreen, {
-          projects,
-          onSubmit: async (e) => { await api.addEntry(e); setScreen('dashboard'); },
-          onBack: () => setScreen('dashboard')
-        });
+      let entriesHtml = '';
+      if (state.entries.length === 0) {
+        entriesHtml = '<div class="empty-state"><p>No entries yet</p></div>';
+      } else {
+        entriesHtml = `
+          <div class="entries-list">
+            ${state.entries.slice(-5).reverse().map((entry, idx) => `
+              <div class="entry-card">
+                <div class="entry-row">
+                  <div class="entry-left">
+                    <div class="entry-project">${entry.project}</div>
+                    <div class="entry-time">${entry.date} ${entry.isHoliday ? '(Holiday)' : entry.startTime + ' - ' + entry.endTime}</div>
+                  </div>
+                  <div class="entry-right">
+                    <div class="entry-earnings">₹${Math.round(entry.earnings)}</div>
+                    ${entry.hours > 0 ? `<div class="entry-hours">${Math.round(entry.hours * 10) / 10}h</div>` : ''}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
       }
 
-      if (screen === 'addProject') {
-        return React.createElement(AddProjectScreen, {
-          onSubmit: async (p) => { await api.addProject(p); setScreen('dashboard'); },
-          onBack: () => setScreen('dashboard')
-        });
+      app.innerHTML = `
+        <div class="dashboard">
+          <div class="header">
+            <h1>IronWork</h1>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="label">Earnings</div>
+                <div class="value">₹${Math.round(stats.totalEarnings).toLocaleString()}</div>
+              </div>
+              <div class="stat-card">
+                <div class="label">Hours</div>
+                <div class="value">${Math.round(stats.totalHours)}h</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="content">
+            <h2 class="section-title">Projects</h2>
+            <div class="project-list">
+              ${projectsHtml}
+            </div>
+
+            <h2 class="section-title">Recent Entries</h2>
+            ${entriesHtml}
+          </div>
+
+          <div class="bottom-nav">
+            <button class="nav-btn primary" onclick="state.screen='addEntry';render()">➕ Add Entry</button>
+            <button class="nav-btn secondary" onclick="state.screen='projects';render()">⚙️ Projects</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAddEntryScreen() {
+      const activeProjects = state.projects.filter(p => p.active);
+      
+      app.innerHTML = `
+        <div class="screen">
+          <div class="screen-header">
+            <button class="back-btn" onclick="state.screen='dashboard';render()">←</button>
+            <h1 class="screen-title">Add Entry</h1>
+          </div>
+
+          <div class="content">
+            <div class="form-group">
+              <label>Project</label>
+              <select id="project-select" onchange="state.formData.project=this.value">
+                ${activeProjects.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" id="date-input" value="${state.formData.date}" onchange="state.formData.date=this.value">
+            </div>
+
+            <div class="checkbox-wrapper">
+              <label>
+                <input type="checkbox" id="holiday-check" ${state.formData.isHoliday ? 'checked' : ''} onchange="state.formData.isHoliday=this.checked;render()">
+                <span>Mark as Paid Holiday</span>
+              </label>
+            </div>
+
+            ${!state.formData.isHoliday ? `
+              <div class="form-group">
+                <label>Start Time</label>
+                <input type="time" id="start-time" value="${state.formData.startTime}" onchange="state.formData.startTime=this.value">
+              </div>
+
+              <div class="form-group">
+                <label>End Time</label>
+                <input type="time" id="end-time" value="${state.formData.endTime}" onchange="state.formData.endTime=this.value">
+              </div>
+            ` : ''}
+
+            <button class="submit-btn" ${state.loading || !state.formData.project ? 'disabled' : ''} onclick="addEntry(state.formData)">
+              ${state.loading ? 'Saving...' : 'Save Entry'}
+            </button>
+          </div>
+        </div>
+      `;
+
+      if (activeProjects.length > 0) {
+        document.getElementById('project-select').value = state.formData.project || activeProjects[0].name;
+      }
+    }
+
+    function renderProjectsScreen() {
+      const activeProjects = state.projects.filter(p => p.active);
+
+      let projectsHtml = '';
+      if (activeProjects.length === 0) {
+        projectsHtml = `
+          <div class="empty-state">
+            <p>No projects created yet</p>
+            <button class="create-btn" onclick="state.screen='addProject';render()">Create First Project</button>
+          </div>
+        `;
+      } else {
+        projectsHtml = activeProjects.map(project => {
+          const rate = project.rate || (project.paymentType === 'Per Day' ? Math.round(project.salary / (project.workingDays || 30)) : Math.round(project.salary / (project.targetHours || 1)));
+          return `
+            <div class="project-card">
+              <h3 class="project-name">${project.name}</h3>
+              <p class="project-rate">Type: <strong>${project.paymentType}</strong></p>
+              <p class="project-rate">${project.paymentType === 'Per Day' ? `Salary: ₹${project.salary} / ${project.workingDays || 30} days` : `Rate: ₹${rate}/hr`}</p>
+              ${project.targetHours > 0 ? `<p class="project-rate">Target: ${project.targetHours}h/month</p>` : ''}
+            </div>
+          `;
+        }).join('');
       }
 
-      if (screen === 'editProject') {
-        return React.createElement(EditProjectScreen, {
-          project: window.editingProject,
-          onSubmit: async (p) => { await api.updateProject(window.editingProject.$id, p); setScreen('dashboard'); },
-          onBack: () => setScreen('dashboard')
-        });
+      app.innerHTML = `
+        <div class="screen">
+          <div class="screen-header">
+            <button class="back-btn" onclick="state.screen='dashboard';render()">←</button>
+            <h1 class="screen-title">Projects</h1>
+          </div>
+
+          <div class="content">
+            <div class="project-list">
+              ${projectsHtml}
+            </div>
+            <button class="submit-btn" onclick="state.screen='addProject';render()">+ Add Project</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAddProjectScreen() {
+      app.innerHTML = `
+        <div class="screen">
+          <div class="screen-header">
+            <button class="back-btn" onclick="state.screen='projects';render()">←</button>
+            <h1 class="screen-title">New Project</h1>
+          </div>
+
+          <div class="content">
+            <div class="form-group">
+              <label>Project Name</label>
+              <input type="text" id="name-input" placeholder="e.g., Nelson Classes" value="${state.formData.name}" onchange="state.formData.name=this.value">
+            </div>
+
+            <div class="form-group">
+              <label>Payment Type</label>
+              <div class="payment-type-buttons">
+                <button class="payment-btn ${state.formData.paymentType === 'Per Day' ? 'active' : ''}" onclick="state.formData.paymentType='Per Day';render()">Per Day</button>
+                <button class="payment-btn ${state.formData.paymentType === 'Hourly' ? 'active' : ''}" onclick="state.formData.paymentType='Hourly';render()">Hourly</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>${state.formData.paymentType === 'Per Day' ? 'Monthly Salary (₹)' : 'Hourly Rate (₹)'}</label>
+              <input type="number" id="salary-input" placeholder="0" value="${state.formData.salary}" onchange="state.formData.salary=this.value">
+            </div>
+
+            ${state.formData.paymentType === 'Per Day' ? `
+              <div class="form-group">
+                <label>Working Days/Month</label>
+                <input type="number" id="days-input" value="${state.formData.workingDays}" onchange="state.formData.workingDays=this.value">
+              </div>
+            ` : `
+              <div class="form-group">
+                <label>Target Hours/Month (optional)</label>
+                <input type="number" id="hours-input" placeholder="e.g., 90" value="${state.formData.targetHours}" onchange="state.formData.targetHours=this.value">
+              </div>
+            `}
+
+            <button class="submit-btn" ${state.loading ? 'disabled' : ''} onclick="handleAddProject()">
+              ${state.loading ? 'Creating...' : 'Create Project'}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleAddProject() {
+      if (!state.formData.name || !state.formData.salary) {
+        alert('Please fill in project name and salary');
+        return;
       }
+      addProject(state.formData);
+    }
 
-      if (screen === 'export') {
-        return React.createElement(ExportScreen, {
-          stats, entries, projects,
-          onBack: () => setScreen('dashboard')
-        });
+    function render() {
+      if (!state.apiUrl) {
+        renderSetupScreen();
+      } else if (state.screen === 'dashboard') {
+        renderDashboard();
+      } else if (state.screen === 'addEntry') {
+        renderAddEntryScreen();
+      } else if (state.screen === 'projects') {
+        renderProjectsScreen();
+      } else if (state.screen === 'addProject') {
+        renderAddProjectScreen();
       }
-    };
+    }
 
-    // Setup Screen
-    const SetupScreen = ({ projectId, setProjectId, onSetup, error }) => {
-      return React.createElement('div', { style: { minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' } },
-        React.createElement('div', { style: { background: 'white', borderRadius: '16px', padding: '40px', maxWidth: '500px', width: '100%' } },
-          React.createElement('h1', { style: { fontSize: '28px', fontWeight: 'bold', marginBottom: '10px', textAlign: 'center' } }, 'IronWork Setup'),
-          React.createElement('p', { style: { fontSize: '14px', color: '#666', textAlign: 'center', marginBottom: '30px' } }, 'Enter your Appwrite Project ID'),
-          React.createElement('div', { style: { background: '#f0f8ff', padding: '15px', borderRadius: '8px', marginBottom: '20px', fontSize: '13px' } },
-            React.createElement('div', { style: { fontWeight: 'bold', marginBottom: '5px' } }, '🔒 SOC 2 Certified Security'),
-            React.createElement('div', null, '✓ Enterprise-grade encryption'),
-            React.createElement('div', null, '✓ HIPAA & GDPR compliant'),
-            React.createElement('div', null, '✓ Your data is 100% secure')
-          ),
-          React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '14px' } }, 'Appwrite Project ID'),
-            React.createElement('input', { 
-              type: 'text', 
-              placeholder: 'Paste your Project ID here', 
-              value: projectId, 
-              onChange: (e) => setProjectId(e.target.value),
-              style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', fontSize: '14px', boxSizing: 'border-box', fontFamily: 'monospace' }
-            })
-          ),
-          error && React.createElement('div', { style: { background: '#ffe0e0', color: '#d32f2f', padding: '12px', borderRadius: '6px', marginBottom: '15px', fontSize: '13px' } }, error),
-          React.createElement('button', { 
-            onClick: onSetup,
-            style: { width: '100%', padding: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }
-          }, 'Connect to Appwrite'),
-          React.createElement('div', { style: { marginTop: '20px', fontSize: '12px', color: '#666', textAlign: 'center' } },
-            'Find your Project ID in ',
-            React.createElement('a', { href: 'https://cloud.appwrite.io', target: '_blank', style: { color: '#667eea' } }, 'Appwrite Console'),
-            ' → Settings'
-          )
-        )
-      );
-    };
+    // Initial render
+    render();
 
-    // Login Screen
-    const LoginScreen = ({ onLogin, onSignup, loading, error, setError }) => {
-      const [email, setEmail] = useState('');
-      const [password, setPassword] = useState('');
-      const [name, setName] = useState('');
-      const [isSignup, setIsSignup] = useState(false);
-
-      return React.createElement('div', { style: { minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' } },
-        React.createElement('div', { style: { background: 'white', borderRadius: '16px', padding: '40px', maxWidth: '400px', width: '100%' } },
-          React.createElement('h1', { style: { fontSize: '28px', fontWeight: 'bold', marginBottom: '10px', textAlign: 'center' } }, 'IronWork'),
-          React.createElement('p', { style: { fontSize: '14px', color: '#666', textAlign: 'center', marginBottom: '20px' } }, isSignup ? 'Create your account' : 'Welcome back'),
-          React.createElement('div', { style: { background: '#f0f8ff', padding: '12px', borderRadius: '6px', marginBottom: '20px', fontSize: '12px', textAlign: 'center' } },
-            '🔒 Secured by Appwrite (SOC 2 + HIPAA)'
-          ),
-          error && React.createElement('div', { style: { background: '#ffe0e0', color: '#d32f2f', padding: '12px', borderRadius: '6px', marginBottom: '15px', fontSize: '13px' } }, error),
-          isSignup && React.createElement('input', { 
-            type: 'text', 
-            placeholder: 'Full Name', 
-            value: name, 
-            onChange: (e) => { setName(e.target.value); setError(''); },
-            style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', marginBottom: '15px', fontSize: '14px', boxSizing: 'border-box' }
-          }),
-          React.createElement('input', { 
-            type: 'email', 
-            placeholder: 'Email', 
-            value: email, 
-            onChange: (e) => { setEmail(e.target.value); setError(''); },
-            style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', marginBottom: '15px', fontSize: '14px', boxSizing: 'border-box' }
-          }),
-          React.createElement('input', { 
-            type: 'password', 
-            placeholder: 'Password (min 8 characters)', 
-            value: password, 
-            onChange: (e) => { setPassword(e.target.value); setError(''); },
-            style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', marginBottom: '20px', fontSize: '14px', boxSizing: 'border-box' }
-          }),
-          React.createElement('button', { 
-            onClick: () => isSignup ? onSignup(email, password, name) : onLogin(email, password),
-            disabled: loading,
-            style: { width: '100%', padding: '12px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '15px' }
-          }, loading ? 'Loading...' : (isSignup ? 'Sign Up' : 'Login')),
-          React.createElement('button', { 
-            onClick: () => { setIsSignup(!isSignup); setError(''); },
-            style: { width: '100%', padding: '12px', background: 'transparent', color: '#667eea', border: '2px solid #667eea', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }
-          }, isSignup ? 'Have account? Login' : 'New user? Sign Up')
-        )
-      );
-    };
-
-    // Dashboard Screen
-    const DashboardScreen = ({ stats, projects, entries, user, onLogout, onAddEntry, onAddProject, onEditProject, onDeleteProject, onDeleteEntry, onExport }) => {
-      const activeProjects = projects.filter(p => p.active);
-      const monthlyChartData = Object.entries(stats.monthlyData).map(([month, data]) => ({ month, earnings: Math.round(data.earnings) }));
-      const projectChartData = Object.entries(stats.projectStats).map(([name, data]) => ({ name, earnings: Math.round(data.earnings) }));
-
-      return React.createElement('div', { style: { minHeight: '100vh', background: '#f8f9fa', paddingBottom: '100px' } },
-        React.createElement('div', { style: { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', padding: '30px 20px', borderRadius: '0 0 20px 20px' } },
-          React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
-            React.createElement('div', null,
-              React.createElement('h1', { style: { fontSize: '32px', fontWeight: 'bold', margin: '0 0 5px 0' } }, 'IronWork'),
-              React.createElement('p', { style: { margin: 0, fontSize: '12px', opacity: 0.9 } }, user.email)
-            ),
-            React.createElement('button', { onClick: onLogout, style: { background: 'rgba(255,255,255,0.2)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' } }, 'Logout')
-          ),
-          React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '20px' } },
-            React.createElement('div', { style: { background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '12px' } },
-              React.createElement('div', { style: { fontSize: '12px', opacity: 0.9, marginBottom: '5px' } }, 'Total Earnings'),
-              React.createElement('div', { style: { fontSize: '24px', fontWeight: 'bold' } }, '₹' + Math.round(stats.totalEarnings).toLocaleString())
-            ),
-            React.createElement('div', { style: { background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '12px' } },
-              React.createElement('div', { style: { fontSize: '12px', opacity: 0.9, marginBottom: '5px' } }, 'Total Hours'),
-              React.createElement('div', { style: { fontSize: '24px', fontWeight: 'bold' } }, Math.round(stats.totalHours) + 'h')
-            )
-          )
-        ),
-
-        React.createElement('div', { style: { padding: '20px' } },
-          React.createElement('div', { style: { background: 'white', padding: '20px', borderRadius: '12px', marginBottom: '20px' } },
-            React.createElement('h2', { style: { fontSize: '16px', fontWeight: 'bold', margin: '0 0 15px 0' } }, 'Monthly Earnings'),
-            React.createElement(ResponsiveContainer, { width: '100%', height: 300 },
-              React.createElement(LineChart, { data: monthlyChartData },
-                React.createElement(CartesianGrid, { strokeDasharray: '3 3' }),
-                React.createElement(XAxis, { dataKey: 'month' }),
-                React.createElement(YAxis, null),
-                React.createElement(Tooltip, { formatter: (v) => '₹' + v }),
-                React.createElement(Line, { type: 'monotone', dataKey: 'earnings', stroke: '#667eea', strokeWidth: 2 })
-              )
-            )
-          ),
-
-          React.createElement('div', { style: { background: 'white', padding: '20px', borderRadius: '12px', marginBottom: '20px' } },
-            React.createElement('h2', { style: { fontSize: '16px', fontWeight: 'bold', margin: '0 0 15px 0' } }, 'Projects Comparison'),
-            React.createElement(ResponsiveContainer, { width: '100%', height: 300 },
-              React.createElement(BarChart, { data: projectChartData },
-                React.createElement(CartesianGrid, { strokeDasharray: '3 3' }),
-                React.createElement(XAxis, { dataKey: 'name' }),
-                React.createElement(YAxis, null),
-                React.createElement(Tooltip, { formatter: (v) => '₹' + v }),
-                React.createElement(Bar, { dataKey: 'earnings', fill: '#667eea' })
-              )
-            )
-          ),
-
-          React.createElement('h2', { style: { fontSize: '18px', fontWeight: 'bold', marginBottom: '15px' } }, 'Your Projects'),
-          activeProjects.length === 0 ? React.createElement('div', { style: { background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' } },
-            React.createElement('p', { style: { color: '#999', marginBottom: '15px' } }, 'No projects yet'),
-            React.createElement('button', { onClick: onAddProject, style: { padding: '10px 20px', background: '#667eea', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' } }, 'Create Project')
-          ) : React.createElement('div', { style: { display: 'grid', gap: '12px' } },
-            activeProjects.map(p => {
-              const pdata = stats.projectStats[p.name] || { earnings: 0, hours: 0, days: 0 };
-              return React.createElement('div', { key: p.$id, style: { background: 'white', padding: '15px', borderRadius: '12px', borderLeft: '4px solid #667eea' } },
-                React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', marginBottom: '10px' } },
-                  React.createElement('div', null,
-                    React.createElement('h3', { style: { margin: '0 0 5px 0', fontSize: '16px', fontWeight: 'bold' } }, p.name),
-                    React.createElement('p', { style: { margin: 0, fontSize: '12px', color: '#666' } }, p.paymentType === 'Per Day' ? '₹' + p.salary + '/month' : '₹' + p.rate + '/hr')
-                  ),
-                  React.createElement('div', { style: { textAlign: 'right' } },
-                    React.createElement('div', { style: { fontSize: '18px', fontWeight: 'bold', color: '#667eea' } }, '₹' + Math.round(pdata.earnings).toLocaleString()),
-                    React.createElement('div', { style: { fontSize: '12px', color: '#999' } }, p.paymentType === 'Per Day' ? pdata.days + ' days' : Math.round(pdata.hours) + 'h')
-                  )
-                ),
-                p.paymentType === 'Hourly' && p.targetHours > 0 ? React.createElement('div', { style: { marginTop: '10px' } },
-                  React.createElement('div', { style: { fontSize: '12px', color: '#666', marginBottom: '5px' } }, 'Progress: ' + Math.round(pdata.hours) + ' / ' + p.targetHours + 'h'),
-                  React.createElement('div', { style: { background: '#f0f0f0', borderRadius: '4px', height: '6px', overflow: 'hidden' } },
-                    React.createElement('div', { style: { background: '#667eea', height: '100%', width: Math.min((pdata.hours / p.targetHours) * 100, 100) + '%' } })
-                  )
-                ) : null,
-                React.createElement('div', { style: { display: 'flex', gap: '8px', marginTop: '10px' } },
-                  React.createElement('button', { onClick: () => onEditProject(p), style: { padding: '6px 12px', background: '#f0f0f0', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' } }, 'Edit'),
-                  React.createElement('button', { onClick: () => { if(confirm('Delete ' + p.name + '?')) onDeleteProject(p.$id); }, style: { padding: '6px 12px', background: '#ffe0e0', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', color: '#d32f2f' } }, 'Delete')
-                )
-              );
-            })
-          ),
-
-          React.createElement('h2', { style: { fontSize: '18px', fontWeight: 'bold', marginBottom: '15px', marginTop: '30px' } }, 'Recent Entries'),
-          entries.length === 0 ? React.createElement('div', { style: { background: 'white', padding: '30px', borderRadius: '12px', textAlign: 'center' } },
-            React.createElement('p', { style: { color: '#999' } }, 'No entries yet')
-          ) : React.createElement('div', { style: { display: 'grid', gap: '10px' } },
-            entries.slice(0, 10).map(e => {
-              const p = projects.find(pr => pr.$id === e.project_id);
-              return React.createElement('div', { key: e.$id, style: { background: 'white', padding: '12px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
-                React.createElement('div', null,
-                  React.createElement('div', { style: { fontWeight: 'bold', marginBottom: '3px' } }, p?.name),
-                  React.createElement('div', { style: { color: '#999', fontSize: '12px' } }, e.date + ' ' + (e.isHoliday ? '(Holiday)' : e.startTime + ' - ' + e.endTime))
-                ),
-                React.createElement('div', { style: { textAlign: 'right' } },
-                  React.createElement('div', { style: { fontWeight: 'bold', color: '#667eea' } }, '₹' + Math.round(e.earnings)),
-                  e.hours > 0 ? React.createElement('div', { style: { color: '#999', fontSize: '12px' } }, Math.round(e.hours * 10) / 10 + 'h') : null
-                ),
-                React.createElement('button', { onClick: () => { if(confirm('Delete this entry?')) onDeleteEntry(e.$id); }, style: { background: 'none', border: 'none', color: '#d32f2f', cursor: 'pointer', fontSize: '16px' } }, '✕')
-              );
-            })
-          )
-        ),
-
-        React.createElement('div', { style: { position: 'fixed', bottom: 0, left: 0, right: 0, background: 'white', borderTop: '1px solid #e0e0e0', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '10px 0' } },
-          React.createElement('button', { onClick: onAddEntry, style: { padding: '15px', background: '#667eea', color: 'white', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' } }, '➕ Entry'),
-          React.createElement('button', { onClick: onAddProject, style: { padding: '15px', background: '#f0f0f0', color: '#333', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' } }, '➕ Project'),
-          React.createElement('button', { onClick: onExport, style: { padding: '15px', background: '#f0f0f0', color: '#333', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' } }, '📥 Export')
-        )
-      );
-    };
-
-    // Add Entry Screen
-    const AddEntryScreen = ({ projects, onSubmit, onBack }) => {
-      const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-      const [projectId, setProjectId] = useState(projects[0]?.$id || '');
-      const [startTime, setStartTime] = useState('09:00');
-      const [endTime, setEndTime] = useState('17:00');
-      const [isHoliday, setIsHoliday] = useState(false);
-
-      return React.createElement('div', { style: { minHeight: '100vh', background: '#f8f9fa' } },
-        React.createElement('div', { style: { background: '#667eea', color: 'white', padding: '20px', display: 'flex', alignItems: 'center', gap: '15px' } },
-          React.createElement('button', { onClick: onBack, style: { background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer' } }, '←'),
-          React.createElement('h1', { style: { fontSize: '24px', fontWeight: 'bold', margin: 0 } }, 'Add Entry')
-        ),
-        React.createElement('div', { style: { padding: '20px' } },
-          React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Project'),
-            React.createElement('select', { value: projectId, onChange: (e) => setProjectId(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } },
-              projects.filter(p => p.active).map(p => React.createElement('option', { key: p.$id, value: p.$id }, p.name))
-            )
-          ),
-          React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Date'),
-            React.createElement('input', { type: 'date', value: date, onChange: (e) => setDate(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-          ),
-          React.createElement('div', { style: { marginBottom: '20px', background: 'white', padding: '15px', borderRadius: '8px' } },
-            React.createElement('label', { style: { display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' } },
-              React.createElement('input', { type: 'checkbox', checked: isHoliday, onChange: (e) => setIsHoliday(e.target.checked) }),
-              React.createElement('span', { style: { fontWeight: 'bold' } }, 'Mark as Paid Holiday')
-            )
-          ),
-          !isHoliday ? React.createElement(React.Fragment, null,
-            React.createElement('div', { style: { marginBottom: '20px' } },
-              React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Start Time'),
-              React.createElement('input', { type: 'time', value: startTime, onChange: (e) => setStartTime(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-            ),
-            React.createElement('div', { style: { marginBottom: '20px' } },
-              React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'End Time'),
-              React.createElement('input', { type: 'time', value: endTime, onChange: (e) => setEndTime(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-            )
-          ) : null,
-          React.createElement('button', { onClick: () => onSubmit({ project_id: projectId, date, startTime, endTime, isHoliday }), style: { width: '100%', padding: '14px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' } }, 'Save Entry')
-        )
-      );
-    };
-
-    // Add Project Screen
-    const AddProjectScreen = ({ onSubmit, onBack }) => {
-      const [name, setName] = useState('');
-      const [paymentType, setPaymentType] = useState('Per Day');
-      const [salary, setSalary] = useState('');
-      const [workingDays, setWorkingDays] = useState('30');
-      const [targetHours, setTargetHours] = useState('');
-
-      return React.createElement('div', { style: { minHeight: '100vh', background: '#f8f9fa' } },
-        React.createElement('div', { style: { background: '#667eea', color: 'white', padding: '20px', display: 'flex', alignItems: 'center', gap: '15px' } },
-          React.createElement('button', { onClick: onBack, style: { background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer' } }, '←'),
-          React.createElement('h1', { style: { fontSize: '24px', fontWeight: 'bold', margin: 0 } }, 'New Project')
-        ),
-        React.createElement('div', { style: { padding: '20px' } },
-          React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Project Name'),
-            React.createElement('input', { type: 'text', placeholder: 'e.g., Nelson Classes', value: name, onChange: (e) => setName(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-          ),
-          React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Payment Type'),
-            React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' } },
-              React.createElement('button', { onClick: () => setPaymentType('Per Day'), style: { padding: '12px', border: paymentType === 'Per Day' ? '2px solid #667eea' : '2px solid #e0e0e0', borderRadius: '8px', background: paymentType === 'Per Day' ? '#f0f0ff' : 'white', cursor: 'pointer', fontWeight: 'bold' } }, 'Per Day'),
-              React.createElement('button', { onClick: () => setPaymentType('Hourly'), style: { padding: '12px', border: paymentType === 'Hourly' ? '2px solid #667eea' : '2px solid #e0e0e0', borderRadius: '8px', background: paymentType === 'Hourly' ? '#f0f0ff' : 'white', cursor: 'pointer', fontWeight: 'bold' } }, 'Hourly')
-            )
-          ),
-          React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, paymentType === 'Per Day' ? 'Monthly Salary (₹)' : 'Hourly Rate (₹)'),
-            React.createElement('input', { type: 'number', placeholder: '0', value: salary, onChange: (e) => setSalary(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-          ),
-          paymentType === 'Per Day' ? React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Working Days per Month'),
-            React.createElement('input', { type: 'number', value: workingDays, onChange: (e) => setWorkingDays(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-          ) : React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Target Hours per Month'),
-            React.createElement('input', { type: 'number', placeholder: 'e.g., 90', value: targetHours, onChange: (e) => setTargetHours(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-          ),
-          React.createElement('button', { onClick: () => onSubmit({ name, paymentType, salary, workingDays, targetHours }), style: { width: '100%', padding: '14px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' } }, 'Create Project')
-        )
-      );
-    };
-
-    // Edit Project Screen
-    const EditProjectScreen = ({ project, onSubmit, onBack }) => {
-      const [name, setName] = useState(project?.name || '');
-      const [salary, setSalary] = useState(project?.salary || '');
-      const [workingDays, setWorkingDays] = useState(project?.workingDays || '30');
-      const [targetHours, setTargetHours] = useState(project?.targetHours || '');
-
-      return React.createElement('div', { style: { minHeight: '100vh', background: '#f8f9fa' } },
-        React.createElement('div', { style: { background: '#667eea', color: 'white', padding: '20px', display: 'flex', alignItems: 'center', gap: '15px' } },
-          React.createElement('button', { onClick: onBack, style: { background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer' } }, '←'),
-          React.createElement('h1', { style: { fontSize: '24px', fontWeight: 'bold', margin: 0 } }, 'Edit Project')
-        ),
-        React.createElement('div', { style: { padding: '20px' } },
-          React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Project Name'),
-            React.createElement('input', { type: 'text', value: name, onChange: (e) => setName(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-          ),
-          React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, project?.paymentType === 'Per Day' ? 'Monthly Salary (₹)' : 'Hourly Rate (₹)'),
-            React.createElement('input', { type: 'number', value: salary, onChange: (e) => setSalary(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-          ),
-          project?.paymentType === 'Per Day' ? React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Working Days per Month'),
-            React.createElement('input', { type: 'number', value: workingDays, onChange: (e) => setWorkingDays(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-          ) : React.createElement('div', { style: { marginBottom: '20px' } },
-            React.createElement('label', { style: { display: 'block', marginBottom: '8px', fontWeight: 'bold' } }, 'Target Hours per Month'),
-            React.createElement('input', { type: 'number', value: targetHours, onChange: (e) => setTargetHours(e.target.value), style: { width: '100%', padding: '12px', border: '2px solid #e0e0e0', borderRadius: '8px', boxSizing: 'border-box' } })
-          ),
-          React.createElement('button', { onClick: () => onSubmit({ name, paymentType: project?.paymentType, salary, workingDays, targetHours }), style: { width: '100%', padding: '14px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' } }, 'Update Project')
-        )
-      );
-    };
-
-    // Export Screen
-    const ExportScreen = ({ stats, entries, projects, onBack }) => {
-      const exportCSV = () => {
-        const headers = ['Date', 'Project', 'Start', 'End', 'Holiday', 'Hours', 'Earnings'];
-        const rows = entries.map(e => {
-          const p = projects.find(pr => pr.$id === e.project_id);
-          return [e.date, p?.name || '', e.startTime, e.endTime, e.isHoliday ? 'Yes' : 'No', e.hours, e.earnings];
-        });
-        const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'ironwork-export.csv';
-        a.click();
-      };
-
-      return React.createElement('div', { style: { minHeight: '100vh', background: '#f8f9fa' } },
-        React.createElement('div', { style: { background: '#667eea', color: 'white', padding: '20px', display: 'flex', alignItems: 'center', gap: '15px' } },
-          React.createElement('button', { onClick: onBack, style: { background: 'none', border: 'none', color: 'white', fontSize: '24px', cursor: 'pointer' } }, '←'),
-          React.createElement('h1', { style: { fontSize: '24px', fontWeight: 'bold', margin: 0 } }, 'Export Data')
-        ),
-        React.createElement('div', { style: { padding: '20px' } },
-          React.createElement('div', { style: { background: 'white', padding: '20px', borderRadius: '12px', marginBottom: '20px' } },
-            React.createElement('h2', { style: { fontSize: '16px', fontWeight: 'bold', margin: '0 0 15px 0' } }, 'Summary'),
-            React.createElement('p', { style: { margin: '10px 0' } }, 'Total Earnings: ₹' + Math.round(stats.totalEarnings).toLocaleString()),
-            React.createElement('p', { style: { margin: '10px 0' } }, 'Total Hours: ' + Math.round(stats.totalHours) + 'h'),
-            React.createElement('p', { style: { margin: '10px 0' } }, 'Total Entries: ' + entries.length)
-          ),
-          React.createElement('button', { onClick: exportCSV, style: { width: '100%', padding: '14px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '15px' } }, '📥 Download CSV'),
-          React.createElement('button', { onClick: onBack, style: { width: '100%', padding: '14px', background: '#f0f0f0', color: '#333', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' } }, 'Back to Dashboard')
-        )
-      );
-    };
-
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(IronworkApp));
+    // Auto-sync entries every 5 seconds
+    setInterval(() => {
+      if (state.apiUrl && state.screen === 'dashboard') {
+        fetchEntries();
+      }
+    }, 5000);
   </script>
 </body>
 </html>
